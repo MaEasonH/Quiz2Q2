@@ -1,0 +1,49 @@
+---
+title: "Quiz2"
+author: "HengMa"
+format: pdf
+editor: visual
+---
+
+```{r setup, fig.pos = "!H", include=TRUE, results='markup'}
+knitr::opts_chunk$set(echo = FALSE)
+install.packages("car")
+library(car)
+library(ggplot2)
+library(stats)
+library(lawstat)
+
+set.seed(1)
+
+TrueHeight_Edward <- rnorm(20, 170, 10)
+TrueHeight_Hugo <- rnorm(20, 170, 10)
+TrueHeight_Lucy <- rnorm(20, 170, 10)
+
+
+EdwardMeasurement <- TrueHeight_Edward + rnorm(20, 0, 2)
+HugoMeasurement <- TrueHeight_Hugo + 3
+LucyMeasurement <- TrueHeight_Lucy - 2
+
+data <- data.frame(FriendID = rep(1:20, 3),
+                   Height = c(TrueHeight_Edward, HugoMeasurement, LucyMeasurement),
+                   Group = rep(c("Edward", "Hugo", "Lucy"), each = 20))
+
+
+t_test_result = t.test(EdwardMeasurement, TrueHeight_Edward, paired = TRUE)
+measurements <- c(EdwardMeasurement, HugoMeasurement, LucyMeasurement)
+groups <- factor(rep(c("Edward", "Hugo", "Lucy"), each = 20))
+
+levene_test_result <- leveneTest(measurements, groups)
+
+
+paired_test_result = t.test(EdwardMeasurement, LucyMeasurement, paired = FALSE)
+
+results_list <- list(T_Test = t_test_result,
+     Levene_Test = levene_test_result,
+     Paired_Test = paired_test_result)
+print(results_list)
+```
+## introduction 
+
+
+In this project, we explore how three friends—Edward, Hugo, and Lucy—each measure the height of their friends using different methods. Edward's technique involves a bit of randomness, adding or subtracting small amounts almost by chance. Hugo, on the other hand, always thinks everyone is a bit taller than they are, adding an extra 3 cm to all his measurements. Lucy takes the opposite approach, deducting 2 cm from everyone, as if she believes everyone is slightly shorter. To understand the effects of their unique approaches, we simulate measuring the heights of 20 friends for each person, applying their specific method to see how it compares to the actual heights. Our goal is to analyze the accuracy and consistency of each method. To do this, we run three types of statistical tests: one to see if Edward's random adjustments make a big difference on average, another to compare the consistency of all three friends' measurements, and a third to directly compare Edward's and Lucy's results to find out whose method shows a bigger departure from reality. This way, we can get a clearer picture of how each friend's measuring technique stacks up against the others.
